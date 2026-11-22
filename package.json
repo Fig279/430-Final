@@ -1,9 +1,10 @@
 {
-  "name": "domomaker",
+  "name": "job-tracker",
   "version": "1.0.0",
-  "description": "A Simple Login Example using Node.js, Mongo and Redis",
+  "description": "Job application tracker with a drag and drop pipeline board",
   "main": "./server/app.js",
   "scripts": {
+    "build": "webpack",
     "webpack": "webpack",
     "webpackWatch": "webpack watch",
     "nodemon": "nodemon -e js,html,css --watch ./server --watch ./hosted ./server/app.js",
