@@ -7,8 +7,5 @@ module.exports = [
     languageOptions: {
       globals: globals.node,
     },
-    rules: {
-      "no-console": "warn",
-    },
   },
 ];

@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
-const _ = require('underscore');
 
 // pipeline columns, order matters for the board
 const STATUSES = ['Wishlist', 'Applied', 'Interview', 'Offer', 'Rejected'];
-
-// escape and trim text before storing
-const cleanText = (text) => _.escape(text).trim();
 
 // contact person tied to one application
 const ContactSchema = new mongoose.Schema({
@@ -13,25 +9,21 @@ const ContactSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    set: cleanText,
   },
   title: {
     type: String,
     trim: true,
     default: '',
-    set: cleanText,
   },
   email: {
     type: String,
     trim: true,
     default: '',
-    set: cleanText,
   },
   phone: {
     type: String,
     trim: true,
     default: '',
-    set: cleanText,
   },
 });
 
@@ -41,13 +33,11 @@ const ApplicationSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    set: cleanText,
   },
   role: {
     type: String,
     required: true,
     trim: true,
-    set: cleanText,
   },
   status: {
     type: String,
@@ -62,8 +52,8 @@ const ApplicationSchema = new mongoose.Schema({
   },
   notes: {
     type: String,
+    trim: true,
     default: '',
-    set: cleanText,
   },
   contacts: {
     type: [ContactSchema],
