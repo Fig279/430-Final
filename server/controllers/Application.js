@@ -52,8 +52,33 @@ const getApplications = async (req, res) => {
   }
 };
 
+// delete one application, owner in the query so users only delete their own
+const deleteApplication = async (req, res) => {
+  if (!req.body.id) {
+    return res.status(400).json({ error: 'Application id is required!' });
+  }
+
+  try {
+    const query = { _id: req.body.id, owner: req.session.account._id };
+    const deleted = await Application.findOneAndDelete(query).lean().exec();
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Application not found!' });
+    }
+    return res.status(200).json({ message: 'Application deleted!' });
+  } catch (err) {
+    console.log(err);
+    // bad id format fails the cast
+    if (err.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid application id!' });
+    }
+    return res.status(500).json({ error: 'An error occured deleting application!' });
+  }
+};
+
 module.exports = {
   trackerPage,
   makeApplication,
   getApplications,
+  deleteApplication,
 };

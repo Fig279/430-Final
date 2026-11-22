@@ -13,7 +13,7 @@ const PipelineBoard = (props) => {
                     {status} <span className="columnCount">{cards.length}</span>
                 </h3>
                 {cards.length === 0 && <p className="columnEmpty">Nothing here yet</p>}
-                {cards.map((app) => <ApplicationCard key={app._id} application={app} />)}
+                {cards.map((app) => <ApplicationCard key={app._id} application={app} onDelete={props.onDelete} />)}
             </div>
         );
     });

@@ -14,6 +14,7 @@ const router = (app) => {
   app.get('/tracker', mid.requiresLogin, controllers.Application.trackerPage);
   app.get('/getApplications', mid.requiresLogin, controllers.Application.getApplications);
   app.post('/tracker', mid.requiresLogin, controllers.Application.makeApplication);
+  app.post('/deleteApplication', mid.requiresLogin, controllers.Application.deleteApplication);
 
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
