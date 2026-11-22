@@ -1,11 +1,26 @@
-const React = require('react');
-const { createRoot } = require('react-dom/client');
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import ApplicationForm from './components/ApplicationForm.jsx';
+import PipelineBoard from './components/PipelineBoard.jsx';
 
-// top level component, board components get added here
+// top level component, owns the application list
 const App = () => {
+    const [applications, setApplications] = useState([]);
+
+    const loadApplications = async () => {
+        const response = await fetch('/getApplications');
+        const data = await response.json();
+        setApplications(data.applications || []);
+    };
+
+    useEffect(() => {
+        loadApplications();
+    }, []);
+
     return (
         <div id="trackerRoot">
-            <h2>Your pipeline</h2>
+            <ApplicationForm onAdded={loadApplications} />
+            <PipelineBoard applications={applications} />
         </div>
     );
 };
