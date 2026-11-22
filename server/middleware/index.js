@@ -9,7 +9,7 @@ const requiresLogin = (req, res, next) => {
 // send logged in users to the app page
 const requiresLogout = (req, res, next) => {
   if (req.session.account) {
-    return res.redirect('/maker');
+    return res.redirect('/tracker');
   }
 
   return next();

@@ -17,7 +17,7 @@ const router = require('./router.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 // cloud uri if set, otherwise local mongo
-const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/DomoMaker';
+const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/JobTracker';
 mongoose.connect(dbURI).catch((err) => {
   if (err) {
     console.log('Could not connect to database');
@@ -49,7 +49,8 @@ redisClient.connect().then(() => {
     store: new RedisStore({
       client: redisClient,
     }),
-    secret: 'Domo Arigato',
+    // secret comes from config vars, fallback is dev only
+    secret: process.env.SESSION_SECRET || 'dev-only-secret',
     resave: false,
     saveUninitialized: false,
   }));
