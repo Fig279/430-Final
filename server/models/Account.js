@@ -33,6 +33,11 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  // demo premium flag, no payment info is stored
+  isPremium: {
+    type: Boolean,
+    default: false,
+  },
   createdDate: {
     type: Date,
     default: Date.now,

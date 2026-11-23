@@ -1,4 +1,5 @@
 const models = require('../models');
+const { FREE_ACTIVE_LIMIT } = require('../limits.js');
 
 const Account = models.Account;
 
@@ -68,9 +69,82 @@ const signup = async (req, res) => {
   }
 };
 
+// username, plan and application cap for the logged in user
+const getAccountInfo = async (req, res) => {
+  try {
+    const account = await Account.findById(req.session.account._id).lean().exec();
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found!' });
+    }
+
+    return res.json({
+      username: account.username,
+      isPremium: account.isPremium,
+      activeLimit: account.isPremium ? null : FREE_ACTIVE_LIMIT,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error retrieving account!' });
+  }
+};
+
+// check the current password, then store a new hash
+const changePassword = (req, res) => {
+  const pass = cleanString(req.body.pass);
+  const newPass = cleanString(req.body.newPass);
+  const newPass2 = cleanString(req.body.newPass2);
+
+  if (!pass || !newPass || !newPass2) {
+    return res.status(400).json({ error: 'All fields are required!' });
+  }
+
+  if (newPass !== newPass2) {
+    return res.status(400).json({ error: 'New passwords do not match!' });
+  }
+
+  if (newPass === pass) {
+    return res.status(400).json({ error: 'New password must be different!' });
+  }
+
+  return Account.authenticate(req.session.account.username, pass, async (err, account) => {
+    if (err || !account) {
+      return res.status(401).json({ error: 'Current password is wrong!' });
+    }
+
+    try {
+      account.password = await Account.generateHash(newPass);
+      await account.save();
+      return res.json({ message: 'Password changed!' });
+    } catch (saveErr) {
+      console.log(saveErr);
+      return res.status(500).json({ error: 'An error occured changing password!' });
+    }
+  });
+};
+
+// demo upgrade, flips the premium flag and never touches payment info
+const togglePremium = async (req, res) => {
+  try {
+    const account = await Account.findById(req.session.account._id).exec();
+    if (!account) {
+      return res.status(404).json({ error: 'Account not found!' });
+    }
+
+    account.isPremium = !account.isPremium;
+    await account.save();
+    return res.json({ isPremium: account.isPremium });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'An error occured updating plan!' });
+  }
+};
+
 module.exports = {
   loginPage,
   login,
   logout,
   signup,
+  getAccountInfo,
+  changePassword,
+  togglePremium,
 };
